@@ -17,6 +17,7 @@ import {
   MessageSquare,
   StopCircle,
   ChevronDown,
+  FileIcon,
 } from 'lucide-react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [mobilePreviewMode, setMobilePreviewMode] = useState(false);
+  const [previewMessageIndex, setPreviewMessageIndex] = useState<number | null>(null);
 
   // Added for smooth scrolling
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -160,9 +162,10 @@ export default function HeroSection() {
     navigator.clipboard.writeText(text);
   };
 
-  const startPreview = () => {
+  const startPreview = (messageIndex: number) => {
     setActiveTab('preview');
     setShowPreview(true);
+    setPreviewMessageIndex(messageIndex);
     
     // Set mobile preview mode if on mobile
     if (isMobile) {
@@ -186,6 +189,7 @@ export default function HeroSection() {
     setActiveTab('');
     setShowPreview(false);
     setMobilePreviewMode(false);
+    setPreviewMessageIndex(null);
   };
 
   const selectChat = (chatId: string) => {
@@ -408,7 +412,7 @@ export default function HeroSection() {
                                         <Copy className="icon-sm icon-muted" />
                                       </button>
                                       <button
-                                        onClick={startPreview}
+                                        onClick={() => startPreview(index)}
                                         className="code-block__action-btn"
                                       >
                                         <Eye className="icon-sm icon-muted" />
@@ -496,7 +500,7 @@ export default function HeroSection() {
                           </>
                         ) : (
                           <>
-                            <button onClick={startPreview} className="code-action-btn">
+                            <button onClick={() => startPreview(previewMessageIndex!)} className="code-action-btn">
                               <Eye className="icon-sm icon-muted" />
                               <span className="code-action-btn__text">Preview</span>
                             </button>
@@ -508,7 +512,7 @@ export default function HeroSection() {
                         
                       </div>
                       
-                      {activeTab === 'preview' && (
+                      {activeTab === 'preview' && previewMessageIndex !== null && (
                         <div className="preview-content">
                           <section className="hero-section">
                             <div className="hero-content">
@@ -525,30 +529,28 @@ export default function HeroSection() {
                         </div>
                       )}
                       
-                      {activeTab === 'code' && (
+                      {activeTab === 'code' && previewMessageIndex !== null && (
                         <div className="code-panel__content">
-                          {messages.map((message, index) => (
-                            message.code && (
-                              <div 
-                                className="code-block" 
-                                key={index}
-                                data-line-numbers={Array.from(
-                                  { length: message.code.split('\n').length },
-                                  (_, i) => i + 1
-                                ).join('\n')}
-                              >
-                                <pre>
-                                  <code className="language-typescript">
-                                    {message.code.split('\n').map((line, lineIndex) => (
-                                      <div key={lineIndex} className={lineIndex === 6 ? "code-line-highlight" : ""}>
-                                        {line}
-                                      </div>
-                                    ))}
-                                  </code>
-                                </pre>
-                              </div>
-                            )
-                          ))}
+                          
+                          {previewMessageIndex !== null && messages[previewMessageIndex].code && (
+                            <div 
+                              className="code-block" 
+                              data-line-numbers={Array.from(
+                                { length: messages[previewMessageIndex].code!.split('\n').length },
+                                (_, i) => i + 1
+                              ).join('\n')}
+                            >
+                              <pre>
+                                <code className="language-typescript">
+                                  {messages[previewMessageIndex].code!.split('\n').map((line, lineIndex) => (
+                                    <div key={lineIndex} className={lineIndex === 6 ? "code-line-highlight" : ""}>
+                                      {line}
+                                    </div>
+                                  ))}
+                                </code>
+                              </pre>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
