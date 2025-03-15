@@ -1,0 +1,198 @@
+// Variables
+:root {
+  --resizable-handle-size: 0;
+  --resizable-handle-hover-area: 8px;
+  --resizable-handle-color: transparent;
+  --resizable-handle-hover-color: rgba(0, 0, 0, 0.05);
+  --resizable-handle-active-color: rgba(0, 120, 250, 0.7);
+  --resizable-line-width: 2px;
+  --resizable-transition-duration: 0.2s;
+  --resizable-transition-timing: ease-out;
+}
+
+// Panel Group
+.resizable-panel-group {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  
+  &--horizontal {
+    flex-direction: row;
+  }
+  
+  &--vertical {
+    flex-direction: column;
+  }
+}
+
+// Panel
+.resizable-panel {
+  position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: var(--panel-size, 50%);
+  min-width: var(--panel-min-size, 10%);
+  min-height: var(--panel-min-size, 10%);
+  overflow: auto;
+  
+  // Add smooth transition when not dragging
+  &--transition {
+    transition: flex-basis var(--resizable-transition-duration) var(--resizable-transition-timing);
+  }
+}
+
+// Handle - Positioned between panels with no gap
+.resizable-handle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background-color: transparent;
+  
+  // Horizontal handle (between side-by-side panels)
+  .resizable-panel-group--horizontal & {
+    width: var(--resizable-handle-size);
+    cursor: col-resize;
+    
+    // Create a larger invisible area for hover/click
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: var(--resizable-handle-hover-area);
+      transform: translateX(-50%);
+      cursor: col-resize;
+    }
+    
+    // The visible line that appears on hover/active
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      height: 100%;
+      width: var(--resizable-line-width);
+      background-color: var(--resizable-handle-active-color);
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none; // Make sure it doesn't interfere with hover
+    }
+  }
+  
+  // Vertical handle (between stacked panels)
+  .resizable-panel-group--vertical & {
+    height: var(--resizable-handle-size);
+    cursor: row-resize;
+    
+    // Create a larger invisible area for hover/click
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: var(--resizable-handle-hover-area);
+      transform: translateY(-50%);
+      cursor: row-resize;
+    }
+    
+    // The visible line that appears on hover/active
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      width: 100%;
+      height: var(--resizable-line-width);
+      background-color: var(--resizable-handle-active-color);
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none; // Make sure it doesn't interfere with hover
+    }
+  }
+  
+  // Hover state - show the line
+  &:hover {
+    &::after {
+      opacity: 0.6;
+    }
+  }
+  
+  // Active/dragging state - show the line more prominently
+  &--dragging {
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  // Focus styles
+  &:focus-visible {
+    outline: none;
+    
+    &::after {
+      opacity: 0.8;
+    }
+  }
+  
+  // Icon for grip handle
+  &-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background-color: var(--resizable-handle-color);
+    z-index: 2;
+  }
+}
+
+// Special class for handles that are automatically inserted between panels
+.resizable-handle-between-panels {
+  .resizable-panel-group--horizontal & {
+    width: 0;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .resizable-panel-group--vertical & {
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+// Add responsive styles
+@media (max-width: 768px) {
+  :root {
+    --resizable-handle-hover-area: 16px; // Larger hover area on mobile for easier touch
+    --resizable-line-width: 3px; // Thicker line on mobile
+  }
+}
+
+// Add dark mode support
+@media (prefers-color-scheme: dark) {
+  :root {
+    --resizable-handle-hover-color: rgba(255, 255, 255, 0.05);
+    --resizable-handle-active-color: rgba(65, 145, 255, 0.8);
+  }
+}
+
+// Add a subtle animation when starting to drag
+@keyframes line-appear {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.resizable-handle--dragging::after {
+  animation: line-appear 0.25s ease forwards;
+} 

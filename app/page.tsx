@@ -20,7 +20,6 @@ import {
   FileIcon,
 } from 'lucide-react';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { Button } from '@/components/ui/button';
 
 const classNames = (...classes: (string | boolean)[] ) => {
   return classes.filter(Boolean).join(' ');
@@ -272,21 +271,17 @@ export default function HeroSection() {
               <span className="sidebar__title">DevByte</span>
             </div>
             <div className="sidebar__actions">
-              <Button
-                variant="ghost"
-                size="icon"
+              <button
                 onClick={toggleHistory}
                 className="sidebar__action-btn"
               >
                 <History className="icon-sm" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
+              </button>
+              <button
                 className="sidebar__action-btn"
               >
                 <Settings className="icon-sm" />
-              </Button>
+              </button>
             </div>
           </div>
           <button
@@ -357,20 +352,16 @@ export default function HeroSection() {
                         </span>
                       </div>
                       <div className="top-bar__actions">
-                        <Button
-                          variant="ghost"
-                          size="icon"
+                        <button
                           className="top-bar__action-btn"
                         >
                           <Share2 className="icon-sm" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
+                        </button>
+                        <button
                           className="top-bar__action-btn"
                         >
                           <ExternalLink className="icon-sm" />
-                        </Button>
+                        </button>
                       </div>
                     </div>
 
