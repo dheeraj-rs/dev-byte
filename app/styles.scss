@@ -1,0 +1,1146 @@
+// Variables
+$primary-color: #1e88e5;
+$secondary-color: #64b5f6;
+$text-color: #333;
+$muted-text-color: #666;
+$light-gray: #f5f5f5;
+$border-color: #e0e0e0;
+$sidebar-width: 280px;
+$sidebar-collapsed-width: 70px;
+$border-radius: 8px;
+$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+$transition-speed: 0.2s;
+
+// Breakpoints
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Mixins
+@mixin flex($direction: row, $justify: flex-start, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin button-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+// Scrollbars
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+// Sidebar
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  width: $sidebar-width;
+  transition: transform 0.3s ease, width 0.3s ease;
+  
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  &__header {
+    @include flex(row, space-between);
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-color;
+    height: 64px;
+    flex-shrink: 0;
+    
+    @include respond-to(sm) {
+      padding: 8px 12px;
+      height: 56px;
+    }
+  }
+  
+  &__logo {
+    @include flex();
+    gap: 8px;
+  }
+  
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    
+    @include respond-to(sm) {
+      font-size: 16px;
+    }
+  }
+  
+  &__actions {
+    @include flex();
+    gap: 8px;
+  }
+  
+  &__action-btn {
+    color: $muted-text-color;
+    
+    &:hover {
+      color: $text-color;
+    }
+  }
+  
+  &--desktop {
+    position: fixed;
+    width: $sidebar-width;
+    
+    &.sidebar--closed {
+      transform: translateX(-100%);
+    }
+  }
+  
+  &--mobile {
+    width: $sidebar-width;
+    transform: translateX(-100%);
+    
+    &.sidebar--open {
+      transform: translateX(0);
+    }
+  }
+}
+
+.mobile-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  display: none;
+  
+  &.active {
+    display: block;
+  }
+}
+
+.sidebar-toggle-wrapper {
+  @include flex();
+}
+
+.sidebar-toggle {
+  @include button-reset;
+  @include flex(row, center, center);
+  color: $muted-text-color;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: $light-gray;
+    color: $text-color;
+  }
+}
+
+.new-chat-btn {
+  @include button-reset;
+  @include flex(row, center);
+  margin: 16px;
+  padding: 10px 16px;
+  background-color: $primary-color;
+  color: white;
+  border-radius: $border-radius;
+  font-weight: 500;
+  gap: 8px;
+  transition: background-color $transition-speed;
+  
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+
+  @include respond-to(sm) {
+    margin: 12px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+.chat-list {
+  @include flex(column, flex-start, stretch);
+  padding: 8px 8px 16px;
+  overflow-y: auto;
+  flex-grow: 1;
+
+  @include respond-to(sm) {
+    padding: 4px 4px 12px;
+  }
+}
+
+.chat-item {
+  @include button-reset;
+  @include flex();
+  padding: 8px 12px;
+  border-radius: $border-radius;
+  gap: 8px;
+  transition: background-color $transition-speed;
+  text-align: left;
+  margin-bottom: 4px;
+  width: 100%;
+  
+  &:hover {
+    background-color: $light-gray;
+  }
+  
+  &--active {
+    background-color: $light-gray;
+    font-weight: 500;
+  }
+  
+  &__title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+  }
+}
+
+// Main Content
+.main-content {
+  flex: 1;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-left: 0;
+  width: 100%;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  
+  &__inner {
+    height: 100%;
+    @include flex(column);
+    width: 100%;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    &.main-content--with-sidebar {
+      margin-left: $sidebar-width;
+      width: calc(100% - #{$sidebar-width});
+    }
+  }
+}
+
+// Adjust main content when sidebar is closed
+@media (min-width: 768px) {
+  .sidebar--closed + .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.content-wrapper {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  flex: 1;
+}
+
+// Top Bar
+.top-bar {
+  @include flex(row, space-between);
+  padding: 12px 16px;
+  border-bottom: 1px solid $border-color;
+  height: 64px;
+  width: 100%;
+  flex-shrink: 0;
+  
+  // Ensure the sidebar toggle is properly aligned
+  .sidebar-toggle-wrapper {
+    margin-right: 12px;
+  }
+
+  @include respond-to(sm) {
+    padding: 8px 12px;
+    height: 56px;
+    
+    .sidebar-toggle-wrapper {
+      margin-right: 8px;
+    }
+  }
+  
+  &__actions {
+    @include flex();
+    gap: 8px;
+
+    @include respond-to(sm) {
+      gap: 4px;
+    }
+  }
+  
+  &__action-btn {
+    color: $muted-text-color;
+    &:hover {
+      color: $text-color;
+    }
+  }
+}
+
+.app-title {
+  @include flex();
+  gap: 8px;
+
+  @include respond-to(sm) {
+    gap: 4px;
+  }
+  
+  &__text {
+    font-size: 18px;
+    font-weight: 600;
+
+    @include respond-to(sm) {
+      font-size: 16px;
+    }
+  }
+  
+  &__icon {
+    color: $muted-text-color;
+  }
+}
+
+// Chat Panel
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  flex: 1;
+}
+
+// Messages
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 16px;
+  width: 100%;
+
+  @include respond-to(sm) {
+    padding: 12px 8px;
+  }
+}
+
+.messages-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+
+  @include respond-to(md) {
+    max-width: 100%;
+  }
+}
+
+.message {
+  margin-bottom: 24px;
+  width: 100%;
+  
+  &__content {
+    @include flex(row, flex-start, flex-start);
+    gap: 12px;
+    width: 100%;
+
+    @include respond-to(sm) {
+      gap: 8px;
+    }
+  }
+  
+  &__avatar {
+    @include flex(row, center, center);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    font-weight: 600;
+    
+    &--user {
+      background-color: $light-gray;
+      color: $text-color;
+    }
+    
+    &--assistant {
+      background-color: $primary-color;
+      color: white;
+    }
+
+    @include respond-to(sm) {
+      width: 30px;
+      height: 30px;
+      font-size: 12px;
+    }
+  }
+  
+  &__body {
+    flex-grow: 1;
+    width: calc(100% - 48px);
+    overflow: hidden;
+
+    @include respond-to(sm) {
+      width: calc(100% - 38px);
+    }
+  }
+  
+  &__text {
+    margin-bottom: 12px;
+    line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    @include respond-to(sm) {
+      font-size: 14px;
+    }
+  }
+  
+  &--user {
+    .message__text {
+      color: $text-color;
+    }
+  }
+  
+  &--assistant {
+    .message__text {
+      color: $text-color;
+    }
+  }
+}
+
+// Code Block
+.code-block {
+  background-color: #f8f9fa;
+  border-radius: $border-radius;
+  margin-top: 12px;
+  position: relative;
+  border: 1px solid $border-color;
+  width: 100%;
+  overflow: hidden;
+  
+  &__actions {
+    @include flex(row, flex-end);
+    padding: 8px 12px;
+    border-bottom: 1px solid $border-color;
+    gap: 8px;
+
+    @include respond-to(sm) {
+      padding: 6px 8px;
+      gap: 4px;
+    }
+  }
+  
+  &__action-btn {
+    @include button-reset;
+    @include flex(row, center, center);
+    padding: 4px;
+    border-radius: 4px;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  &__content {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    
+    code {
+      white-space: pre;
+      word-break: normal;
+      overflow-wrap: normal;
+    }
+
+    @include respond-to(sm) {
+      padding: 12px 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+// Input Area
+.input-area {
+  padding: 16px;
+  border-top: 1px solid $border-color;
+  background-color: white;
+  width: 100%;
+
+  @include respond-to(sm) {
+    padding: 12px 8px;
+  }
+}
+
+.input-form {
+  @include flex();
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  width: 100%;
+
+  @include respond-to(md) {
+    max-width: 100%;
+  }
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 48px 12px 16px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 16px;
+  transition: border-color $transition-speed;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+  }
+  
+  &::placeholder {
+    color: $muted-text-color;
+  }
+
+  @include respond-to(sm) {
+    padding: 10px 40px 10px 12px;
+    font-size: 14px;
+  }
+}
+
+.submit-btn {
+  @include button-reset;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $primary-color;
+  
+  &:hover {
+    color: darken($primary-color, 10%);
+  }
+  
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @include respond-to(sm) {
+    right: 8px;
+  }
+}
+
+// Generating Indicator
+.generating-indicator {
+  @include flex();
+  gap: 12px;
+  color: $muted-text-color;
+  margin: 16px 0;
+
+  @include respond-to(sm) {
+    gap: 8px;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  
+  &__spinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+// Preview Panel
+.preview-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid $border-color;
+  overflow: hidden;
+  width: 100%;
+  
+  &__actions {
+    @include flex(row, flex-end);
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-color;
+    gap: 8px;
+    flex-shrink: 0;
+
+    @include respond-to(sm) {
+      padding: 8px;
+      gap: 4px;
+    }
+  }
+}
+
+.preview-action-btn {
+  @include button-reset;
+  @include flex();
+  padding: 6px 12px;
+  border-radius: $border-radius;
+  gap: 8px;
+  color: $muted-text-color;
+  
+  &:hover {
+    background-color: $light-gray;
+    color: $text-color;
+  }
+  
+  &__text {
+    font-size: 14px;
+
+    @include respond-to(sm) {
+      font-size: 12px;
+    }
+  }
+
+  @include respond-to(sm) {
+    padding: 4px 8px;
+  }
+}
+
+.preview-content {
+  padding: 20px;
+  height: 100%;
+  overflow: auto;
+  
+  .hero-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    
+    .hero-description {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &.btn-primary {
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          
+          &:hover {
+            background-color: #2563eb;
+          }
+        }
+        
+        &.btn-secondary {
+          background-color: transparent;
+          color: #3b82f6;
+          border: 1px solid #3b82f6;
+          
+          &:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Code Panel - Enhanced styling
+.code-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid $border-color;
+  overflow: hidden;
+  
+  &__content {
+    background: #1e1e1e;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    
+    .code-block {
+      flex: 1;
+      margin: 0;
+      background: transparent;
+      border: none;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      max-width: 100% !important;
+      position: relative;
+
+      // Enhanced line numbers container
+      &::before {
+        content: attr(data-line-numbers);
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        padding: 16px 12px;
+        color: #858585;
+        background: #252526;
+        border-right: 1px solid #404040;
+        text-align: right;
+        font-size: 14px;
+        line-height: 1.5;
+        font-family: 'Fira Code', 'Menlo', monospace;
+        user-select: none;
+        white-space: pre;
+        width: 50px;
+        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+      }
+
+      pre {
+        margin: 0;
+        padding: 16px 16px 16px 60px;
+        background: transparent;
+        overflow-x: auto;
+        flex: 1;
+        
+        code {
+          font-family: 'Fira Code', 'Menlo', monospace;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #d4d4d4;
+          white-space: pre;
+          
+          // Enhanced syntax highlighting
+          .keyword { color: #569cd6; font-weight: bold; }
+          .string { color: #ce9178; }
+          .function { color: #dcdcaa; }
+          .comment { color: #6a9955; font-style: italic; }
+          .number { color: #b5cea8; }
+          .operator { color: #d4d4d4; }
+          .punctuation { color: #d4d4d4; }
+          .class-name { color: #4ec9b0; }
+          .parameter { color: #9cdcfe; }
+          .imports { color: #c586c0; font-weight: bold; }
+          .property { color: #9cdcfe; }
+          .tag { color: #569cd6; }
+          .attr-name { color: #9cdcfe; }
+          .attr-value { color: #ce9178; }
+        }
+      }
+    }
+  }
+
+  &__actions {
+    background: #2d2d2d;
+    border-bottom: 1px solid #404040;
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  &__action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #d4d4d4;
+    border: 1px solid #505050;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    
+    &:hover {
+      background: #404040;
+      border-color: #606060;
+    }
+    
+    .icon-sm {
+      color: #75beff;
+    }
+
+    &--active {
+      background: #404040;
+      border-color: #75beff;
+      box-shadow: 0 0 0 1px rgba(117, 190, 255, 0.2);
+    }
+  }
+}
+
+// Code action button
+.code-action-btn {
+  @include button-reset;
+  @include flex();
+  padding: 6px 12px;
+  border-radius: $border-radius;
+  gap: 8px;
+  color: #d4d4d4;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #505050;
+  
+  &:hover {
+    background: #404040;
+    border-color: #606060;
+  }
+  
+  &__text {
+    font-size: 13px;
+  }
+
+  @include respond-to(sm) {
+    padding: 4px 8px;
+    
+    &__text {
+      font-size: 12px;
+    }
+  }
+}
+
+// Line highlight effect
+.code-line-highlight {
+  background: rgba(117, 190, 255, 0.1);
+  display: inline-block;
+  width: 100%;
+}
+
+// Add line number gutter styles
+.line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 50px;
+  padding: 16px 0;
+  background: #252526;
+  border-right: 1px solid #404040;
+  user-select: none;
+  counter-reset: linenumber;
+  
+  > span {
+    display: block;
+    counter-increment: linenumber;
+    text-align: right;
+    padding-right: 12px;
+    color: #858585;
+    
+    &::before {
+      content: counter(linenumber);
+      color: #858585;
+    }
+    
+    &.highlight::before {
+      color: #d7d7d7;
+      font-weight: bold;
+    }
+  }
+}
+
+// Enhanced scrollbar for code panel
+.code-panel__content {
+  &::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #424242;
+    border: 4px solid transparent;
+    background-clip: padding-box;
+    border-radius: 7px;
+    
+    &:hover {
+      background: #525252;
+      background-clip: padding-box;
+    }
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #1e1e1e;
+  }
+  
+  &::-webkit-scrollbar-corner {
+    background: #1e1e1e;
+  }
+}
+
+// Code editor enhancements
+.code-editor {
+  position: relative;
+  height: 100%;
+  background: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  
+  &__header {
+    background: #2d2d2d;
+    padding: 10px 16px;
+    border-bottom: 1px solid #404040;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  &__content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  &__textarea {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: #d4d4d4;
+    font-family: 'Fira Code', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 16px 16px 16px 60px;
+    border: none;
+    resize: none;
+    outline: none;
+    
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    padding: 16px 0;
+    background: #252526;
+    border-right: 1px solid #404040;
+    color: #858585;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: right;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Add code type indicator
+.code-type-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(117, 190, 255, 0.1);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #75beff;
+  margin-left: 10px;
+  
+  .icon-sm {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-md) {
+  .code-panel {
+    &__content {
+      .code-block {
+        pre code {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .code-editor {
+    &__textarea {
+      font-size: 12px;
+    }
+  }
+}
+
+/* Adjust for mobile */
+@media (max-width: 767px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+// Main content expanded state
+.main-content--expanded {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+// Top bar adjustments
+.top-bar {
+  @include flex(row, space-between);
+  padding: 12px 16px;
+  border-bottom: 1px solid $border-color;
+  height: 64px;
+  width: 100%;
+  flex-shrink: 0;
+  
+  // Ensure the sidebar toggle is properly aligned
+  .sidebar-toggle-wrapper {
+    margin-right: 12px;
+  }
+
+  @include respond-to(sm) {
+    padding: 8px 12px;
+    height: 56px;
+    
+    .sidebar-toggle-wrapper {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Ensure ResizablePanelGroup takes full width
+.ResizablePanelGroup {
+  width: 100% !important;
+}
+
+// Chat panel adjustments
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  flex: 1;
+}
+
+// Mobile preview mode
+.mobile-preview-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: white;
+}
+
+// Back button for mobile preview
+.preview-back-btn {
+  @include button-reset;
+  @include flex();
+  padding: 6px 12px;
+  border-radius: $border-radius;
+  gap: 8px;
+  color: $muted-text-color;
+  margin-right: auto;
+  
+  &:hover {
+    background-color: $light-gray;
+    color: $text-color;
+  }
+  
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Adjust preview panel actions for mobile
+.preview-panel__actions, .code-panel__actions {
+  @include flex(row, flex-end);
+  
+  // When in mobile mode, adjust to show back button
+  .mobile-preview-mode & {
+    justify-content: space-between;
+  }
+}
+
+// Ensure ResizablePanelGroup handles mobile preview properly
+@media (max-width: $breakpoint-md) {
+  [data-panel-group-direction="horizontal"] {
+    position: relative;
+  }
+  
+  .mobile-preview-mode {
+    .preview-panel, .code-panel {
+      height: 100vh;
+      
+      &__content {
+        height: calc(100vh - 64px);
+      }
+    }
+  }
+}
